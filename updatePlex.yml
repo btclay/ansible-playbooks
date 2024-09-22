@@ -20,11 +20,11 @@
           upgrade: dist
           force_apt_get: true
 
-      - name: "Reboot Ubuntu System"
+      - name: "Reboot plex server"
         when: stream_count.stdout is search("0")
         ansible.builtin.reboot:
 
-      - name: "Apt Autoremove all Ubuntu Linux Systems"
+      - name: "Apt Autoremove"
         when: stream_count.stdout is search("0")
         apt:
           autoremove: yes
