@@ -1,0 +1,35 @@
+---
+  - name: Update plex if no active streams
+    hosts: plex
+    become: yes
+    strategy: free
+    gather_facts: false
+    vars_files: ~/ansible/secrets/plex_vars.yml
+
+
+    tasks:
+
+      - name: "Determine streams currently playing"
+        shell: "/usr/bin/curl -s http://localhost:32400/status/sessions?X-Plex-Token={{ plex_token }} | grep \"Player\" | wc -l"
+        register: stream_count
+
+      - name: "Update repo cache & full system update"
+        when: stream_count.stdout is search("0")
+        apt:
+          update_cache: true
+          upgrade: dist
+          force_apt_get: true
+
+      - name: "Reboot Ubuntu System"
+        when: stream_count.stdout is search("0")
+        ansible.builtin.reboot:
+
+      - name: "Apt Autoremove all Ubuntu Linux Systems"
+        when: stream_count.stdout is search("0")
+        apt:
+          autoremove: yes
+
+      - name: "Reboot once more after removing old kernel"
+        when: stream_count.stdout is search("0")
+        ansible.builtin.reboot:
+
