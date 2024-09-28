@@ -71,7 +71,7 @@
 
       - name: Mount movies share
         ansible.posix.mount:
-          src: {{ share_location }}:/volume1/video/movies
+          src: "{{ share_location }}:/volume1/video/movies"
           path: /media/video/movies
           opts: defaults
           state: mounted
@@ -79,7 +79,7 @@
 
       - name: Mount tv share
         ansible.posix.mount:
-          src: {{ share_location }}:/volume1/video/tv
+          src: "{{ share_location }}:/volume1/video/tv"
           path: /media/video/tv
           opts: defaults
           state: mounted
@@ -87,7 +87,7 @@
 
       - name: Mount concerts share
         ansible.posix.mount:
-          src: {{ share_location }}:/volume1/video/concerts
+          src: "{{ share_location }}:/volume1/video/concerts"
           path: /media/video/concerts
           opts: defaults
           state: mounted
@@ -95,7 +95,7 @@
 
       - name: Mount theater share
         ansible.posix.mount:
-          src: {{ share_location }}:/volume1/video/theater
+          src: "{{ share_location }}:/volume1/video/theater"
           path: /media/video/theater
           opts: defaults
           state: mounted
@@ -103,7 +103,7 @@
 
       - name: Mount music share
         ansible.posix.mount:
-          src: {{ share_location }}:/volume1/music
+          src: "{{ share_location }}:/volume1/music"
           path: /media/music
           opts: defaults
           state: mounted
