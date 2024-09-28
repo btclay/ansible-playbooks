@@ -1,0 +1,114 @@
+---
+  - name: Deploy new plex server from base Ubuntu install
+    hosts: plex2
+    become: yes
+    strategy: free
+    gather_facts: false
+    vars_files: ~/ansible/secrets/plex_vars.yml
+
+
+    tasks:
+      - name: Add plex Apt signing key
+        ansible.builtin.apt_key:
+          id: CD665CBA0E2F88B7373F7CB997203C7B3ADCA79D
+          url: https://downloads.plex.tv/plex-keys/PlexSign.key
+          state: present
+
+      - name: Add plex repository into sources list
+        ansible.builtin.apt_repository:
+          repo: deb https://downloads.plex.tv/repo/deb/ public main
+          state: present
+
+      - name: Update repo cache & full system update
+        apt:
+          update_cache: true
+          upgrade: dist
+          force_apt_get: true
+
+      - name: Install nfs-common
+        ansible.builtin.package:
+          name: nfs-common
+          state: present
+
+      - name: Install plexmediaserver
+        ansible.builtin.package:
+          name: plexmediaserver
+          state: present
+
+
+      - name: Reboot after package installation
+        ansible.builtin.reboot:
+
+      - name: Create movies directory to mount nfs share to
+        ansible.builtin.file:
+          path: /media/video/movies
+          state: directory
+          mode: '0777'
+
+      - name: Create tv directory to mount nfs share to
+        ansible.builtin.file:
+          path: /media/video/tv
+          state: directory
+          mode: '0777'
+
+      - name: Create concerts directory to mount nfs share to
+        ansible.builtin.file:
+          path: /media/video/concerts
+          state: directory
+          mode: '0777'
+
+      - name: Create theater directory to mount nfs share to
+        ansible.builtin.file:
+          path: /media/video/theater
+          state: directory
+          mode: '0777'
+
+      - name: Create music directory to mount nfs share to
+        ansible.builtin.file:
+          path: /media/music
+          state: directory
+          mode: '0777'
+
+      - name: Mount movies share
+        ansible.posix.mount:
+          src: {{ share_location }}:/volume1/video/movies
+          path: /media/video/movies
+          opts: defaults
+          state: mounted
+          fstype: nfs
+
+      - name: Mount tv share
+        ansible.posix.mount:
+          src: {{ share_location }}:/volume1/video/tv
+          path: /media/video/tv
+          opts: defaults
+          state: mounted
+          fstype: nfs
+
+      - name: Mount concerts share
+        ansible.posix.mount:
+          src: {{ share_location }}:/volume1/video/concerts
+          path: /media/video/concerts
+          opts: defaults
+          state: mounted
+          fstype: nfs
+
+      - name: Mount theater share
+        ansible.posix.mount:
+          src: {{ share_location }}:/volume1/video/theater
+          path: /media/video/theater
+          opts: defaults
+          state: mounted
+          fstype: nfs
+
+      - name: Mount music share
+        ansible.posix.mount:
+          src: {{ share_location }}:/volume1/music
+          path: /media/music
+          opts: defaults
+          state: mounted
+          fstype: nfs
+
+
+
+
