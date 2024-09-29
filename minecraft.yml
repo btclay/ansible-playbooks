@@ -1,0 +1,75 @@
+---
+  - name: Deploy new minecraft server from base Ubuntu install
+    hosts: mc
+    become: yes
+    strategy: free
+    gather_facts: false
+
+
+    tasks:
+
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Update repo cache & full system update
+      apt:
+        update_cache: true
+        upgrade: dist
+        force_apt_get: true
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+
+    - name: Reboot after package installation
+      ansible.builtin.reboot:
+
+    - name: Create minecraft directory for docker to run from
+      ansible.builtin.file:
+        path: /docker/minecraft
+        state: directory
+        mode: '0755'
+
+    - name: Copy docker-compose file to server
+      ansible.builtin.copy:
+        src: ./configs/minecraft/docker-compose.yml
+        dest: /docker/minecraft/docker-compose.yml
+
+    - name: Create and start services
+      community.docker.docker_compose_v2:
+        project_src: /docker/minecraft
+      register: output
