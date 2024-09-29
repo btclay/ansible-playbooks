@@ -8,12 +8,6 @@
 
     tasks:
 
-    - name: Install aptitude
-      apt:
-        name: aptitude
-        state: latest
-        update_cache: true
-
     - name: Update repo cache & full system update
       apt:
         update_cache: true
