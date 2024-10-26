@@ -1,5 +1,5 @@
 ---
-  - name: Update plex if no active streams
+  - name: Update plex if no active streams, then backup plex metadata and config
     hosts: plex
     strategy: free
     gather_facts: true
