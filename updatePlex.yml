@@ -1,9 +1,9 @@
 ---
   - name: Update plex if no active streams
     hosts: plex
-    become: yes
     strategy: free
-    gather_facts: false
+    gather_facts: true
+    become: true
     vars_files: ~/ansible/secrets/plex_vars.yml
 
 
@@ -32,4 +32,20 @@
       - name: "Reboot once more after removing old kernel"
         when: stream_count.stdout is search("0")
         ansible.builtin.reboot:
+
+      - name: Create backup directory
+        ansible.builtin.file:
+          path: "/mnt/backups/plex/{{ ansible_date_time.date }}"
+          state: directory
+          mode: '0777'
+        delegate_to: localhost
+
+      - name: Backup plex data
+        synchronize:
+          src: "/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/" # remote host
+          dest: "/mnt/backups/plex/{{ ansible_date_time.date}}/" # localhost
+          mode: pull
+          recursive: true
+          rsync_path: "sudo -u plex rsync"
+        become: false
 
