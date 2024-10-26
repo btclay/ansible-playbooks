@@ -41,11 +41,12 @@
         delegate_to: localhost
 
       - name: Backup plex data
-        synchronize:
+        ansible.posix.synchronize:
           src: "/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/" # remote host
           dest: "/mnt/backups/plex/{{ ansible_date_time.date }}/" # localhost
           mode: pull
           recursive: true
           rsync_path: "sudo -u plex rsync"
+          compress: false
         become: false
 
