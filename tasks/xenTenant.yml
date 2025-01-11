@@ -1,0 +1,12 @@
+## tasks to run if hosting on xcp-ng
+
+- name: Update repo cache & full system update
+  apt:
+    update_cache: true
+    upgrade: dist
+    force_apt_get: true
+    
+- name: Install xe-guest-utilities
+  ansible.builtin.package:
+    name: xe-guest-utilities
+    state: present

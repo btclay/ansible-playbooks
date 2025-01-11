@@ -1,6 +1,6 @@
 ---
   - name: Deploy new plex server from base Ubuntu install
-    hosts: plex2
+    hosts: plex0
     become: yes
     strategy: free
     gather_facts: false
@@ -8,6 +8,8 @@
 
 
     tasks:
+      - include_tasks: tasks/xenTenant.yml
+
       - name: Add plex Apt signing key
         ansible.builtin.apt_key:
           id: CD665CBA0E2F88B7373F7CB997203C7B3ADCA79D
