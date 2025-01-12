@@ -41,12 +41,13 @@
           state: present
 
       - name: Create ansible dir
+        become: false
         ansible.builtin.file:
-          path: /usr/share/ansible/playbooks
+          path: ~/ansible/playbooks
           state: directory
-          mode: '0777'
 
       - name: Clone this repository to pull in playbooks
+        become: false
         ansible.builtin.git:
           repo: https://github.com/btclay/ansible-playbooks.git
-          dest: /usr/share/ansible/playbooks
+          dest: ~/ansible/playbooks
