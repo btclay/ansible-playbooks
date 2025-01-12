@@ -112,5 +112,9 @@
           fstype: nfs
 
 
+      - name: Install tautulli
+        community.general.snap:
+          name: tautulli
+
 
 

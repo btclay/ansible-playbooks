@@ -4,9 +4,11 @@
     become: yes
     strategy: free
     gather_facts: false
-    vars_files: ~/ansible/secrets/ans_control_vars.yml
 
     tasks:
+
+      - include_tasks: tasks/xenTenant.yml
+
       - name: Update repo cache & full system update
         ansible.builtin.apt:
           update_cache: true
@@ -33,20 +35,6 @@
           name: nfs-common
           state: present
 
-      - name: Create backup dir (for backup automation)
-        ansible.builtin.file:
-          path: /mnt/backups
-          state: directory
-          mode: '0777'
-
-      - name: Mount backup fileshare
-        ansible.posix.mount:
-          src: "{{ share_location }}:/volume1/backup_automation"
-          path: /mnt/backups
-          opts: defaults
-          state: mounted
-          fstype: nfs
-
       - name: Install git
         ansible.builtin.apt:
           name: git
@@ -54,11 +42,11 @@
 
       - name: Create ansible dir
         ansible.builtin.file:
-          path: /src/ansible-playbooks
+          path: /usr/share/ansible/playbooks
           state: directory
           mode: '0777'
 
       - name: Clone this repository to pull in playbooks
         ansible.builtin.git:
           repo: https://github.com/btclay/ansible-playbooks.git
-          dest: /src/ansible-playbooks
+          dest: /usr/share/ansible/playbooks
