@@ -1,0 +1,59 @@
+---
+  - name: Deploy new phpipam from base Ubuntu install
+    hosts: ipam
+    become: yes
+    strategy: free
+    gather_facts: false
+
+
+    tasks:
+      - include_tasks: tasks/xenTenant.yml
+
+      - name: Install required system packages
+        apt:
+          pkg:
+            - apt-transport-https
+            - ca-certificates
+            - curl
+            - software-properties-common
+            - python3-pip
+            - virtualenv
+            - python3-setuptools
+          state: latest
+          update_cache: true
+
+
+      - name: Add Docker GPG apt Key
+        apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+          state: present
+
+
+      - name: Add Docker Repository
+        apt_repository:
+          repo: deb https://download.docker.com/linux/ubuntu focal stable
+          state: present
+
+      - name: Update apt and install docker-ce and docker-compose
+        apt:
+          pkg:
+            - docker-ce
+            - docker-compose
+          state: latest
+          update_cache: true
+
+      - name: Create phpipam directory for docker to run from
+        ansible.builtin.file:
+          path: /docker/phpipam/data
+          state: directory
+          mode: '0755'
+
+      - name: Copy docker-compose file to server
+        ansible.builtin.copy:
+          src: ./configs/ipam/docker-compose.yml
+          dest: /docker/phpipam/docker-compose.yml
+
+      - name: Create and start services
+        community.docker.docker_compose_v2:
+          project_src: /docker/phpipam
+        register: output
