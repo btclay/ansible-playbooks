@@ -50,7 +50,7 @@
       - name: Reboot after package installation
         ansible.builtin.reboot:
 
-      - name: Create minecraft directory for docker to run from
+      - name: Create uptime-kuma directory for docker to run from
         ansible.builtin.file:
           path: /docker/uptime-kuma/data
           state: directory

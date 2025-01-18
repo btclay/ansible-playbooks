@@ -1,9 +1,9 @@
 services:
-uk:
+  uptime-kuma:
     image: louislam/uptime-kuma:1
-    tty: true
-    stdin_open: true
-    ports:
-      - "80:3001"
     volumes:
       - /docker/uptime-kuma/data:/app/data
+    ports:
+      # <Host Port>:<Container Port>
+      - 80:3001
+    restart: unless-stopped
