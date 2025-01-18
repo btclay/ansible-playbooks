@@ -9,12 +9,6 @@
     tasks:
       - include_tasks: tasks/xenTenant.yml
 
-      - name: Update repo cache & full system update
-        apt:
-          update_cache: true
-          upgrade: dist
-          force_apt_get: true
-
       - name: Install required system packages
         apt:
           pkg:
@@ -40,15 +34,13 @@
           repo: deb https://download.docker.com/linux/ubuntu focal stable
           state: present
 
-      - name: Update apt and install docker-ce
+      - name: Update apt and install docker-ce and docker-compose
         apt:
-          name: docker-ce
+          pkg:
+            - docker-ce
+            - docker-compose
           state: latest
           update_cache: true
-
-
-      - name: Reboot after package installation
-        ansible.builtin.reboot:
 
       - name: Create uptime-kuma directory for docker to run from
         ansible.builtin.file:
@@ -60,6 +52,11 @@
         ansible.builtin.copy:
           src: ./configs/uptime-kuma/docker-compose.yml
           dest: /docker/uptime-kuma/docker-compose.yml
+
+      - name: Copy nginx config file to server
+        ansible.builtin.copy:
+          src: ./configs/uptime-kuma/nginx.conf
+          dest: /docker/uptime-kuma/nginx.conf
 
       - name: Create and start services
         community.docker.docker_compose_v2:
