@@ -1,0 +1,9 @@
+services:
+uk:
+    image: louislam/uptime-kuma:1
+    tty: true
+    stdin_open: true
+    ports:
+      - "80:3001"
+    volumes:
+      - /docker/uptime-kuma/data:/app/data

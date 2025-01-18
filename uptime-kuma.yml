@@ -1,0 +1,67 @@
+---
+  - name: Deploy new Uptime Kuma from base Ubuntu install
+    hosts: uk
+    become: yes
+    strategy: free
+    gather_facts: false
+
+
+    tasks:
+      - include_tasks: tasks/xenTenant.yml
+
+          - name: Update repo cache & full system update
+      apt:
+        update_cache: true
+        upgrade: dist
+        force_apt_get: true
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+
+    - name: Reboot after package installation
+      ansible.builtin.reboot:
+
+    - name: Create minecraft directory for docker to run from
+      ansible.builtin.file:
+        path: /docker/uptime-kuma/data
+        state: directory
+        mode: '0755'
+
+    - name: Copy docker-compose file to server
+      ansible.builtin.copy:
+        src: ./configs/uptime-kuma/docker-compose.yml
+        dest: /docker/uptime-kuma/docker-compose.yml
+
+    - name: Create and start services
+      community.docker.docker_compose_v2:
+        project_src: /docker/uptime-kuma
+      register: output
