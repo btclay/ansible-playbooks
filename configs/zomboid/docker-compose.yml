@@ -23,7 +23,7 @@ services:
       dockerfile: docker/zomboid-dedicated-server.Dockerfile
     image: "docker.io/renegademaster/zomboid-dedicated-server:latest"
     container_name: zomboid-dedicated-server
-    restart: "no"
+    restart: "unless-stopped"
     environment:
       - "ADMIN_PASSWORD=zadmin"
       - "ADMIN_USERNAME=zpassword"
