@@ -1,0 +1,77 @@
+---
+  - name: Deploy new project zomboid server from base Ubuntu install
+    hosts: zomboid
+    become: yes
+    strategy: free
+    gather_facts: false
+
+
+    tasks:
+
+    - name: Update repo cache & full system update
+      apt:
+        update_cache: true
+        upgrade: dist
+        force_apt_get: true
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        pkg:
+          - docker-ce
+          - docker-compose
+        state: latest
+        update_cache: true
+
+
+    - name: Create zomboid directory for docker to run from
+      ansible.builtin.file:
+        path: /docker/zomboid
+        state: directory
+        mode: '0755'
+
+    - name: Create zomboid server data directory
+      ansible.builtin.file:
+        path: /docker/zomboid/ZomboidDedicatedServer
+        state: directory
+        mode: '0755'
+
+    - name: Create zomboid config directory
+      ansible.builtin.file:
+        path: /docker/zomboid/ZomboidConfig
+        state: directory
+        mode: '0755'
+
+    - name: Copy docker-compose file to server
+      ansible.builtin.copy:
+        src: ./configs/zomboid/docker-compose.yml
+        dest: /docker/zomboid/docker-compose.yml
+
+    - name: Create and start services
+      community.docker.docker_compose_v2:
+        project_src: /docker/zomboid
+      register: output
