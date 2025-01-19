@@ -12,8 +12,8 @@ services:
       - IPAM_DISABLE_INSTALLER=1
     restart: unless-stopped
     volumes:
-      - phpipam-logo:/phpipam/css/images/logo
-      - phpipam-ca:/usr/local/share/ca-certificates:ro
+      - /docker/ipam/data/phpipam-logo:/phpipam/css/images/logo
+      - /docker/ipam/data/phpipam-ca:/usr/local/share/ca-certificates:ro
     depends_on:
       - phpipam-mariadb
 
@@ -28,7 +28,7 @@ services:
       - IPAM_DISABLE_INSTALLER=1
     restart: unless-stopped
     volumes:
-      - phpipam-ca:/usr/local/share/ca-certificates:ro
+      - /docker/ipam/data/phpipam-ca:/usr/local/share/ca-certificates:ro
     depends_on:
       - phpipam-mariadb
 
@@ -38,7 +38,7 @@ services:
       - MYSQL_ROOT_PASSWORD=potato
     restart: unless-stopped
     volumes:
-      - phpipam-db-data:/var/lib/mysql
+      - /docker/ipam/data/phpipam-db-data:/var/lib/mysql
 
 volumes:
   phpipam-db-data:

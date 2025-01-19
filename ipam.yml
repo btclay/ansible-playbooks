@@ -48,6 +48,24 @@
           state: directory
           mode: '0755'
 
+      - name: Create phpipam logo directory
+        ansible.builtin.file:
+          path: /docker/phpipam/data/phpipam-logo
+          state: directory
+          mode: '0755'
+
+      - name: Create phpipam-ca directory
+        ansible.builtin.file:
+          path: /docker/phpipam/data/phpipam-ca
+          state: directory
+          mode: '0755'
+
+      - name: Create phpipam directory for docker to run from
+        ansible.builtin.file:
+          path: /docker/phpipam/data/phpipam-db-data
+          state: directory
+          mode: '0755'
+
       - name: Copy docker-compose file to server
         ansible.builtin.copy:
           src: ./configs/ipam/docker-compose.yml
