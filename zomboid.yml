@@ -8,11 +8,7 @@
 
     tasks:
 
-    - name: Update repo cache & full system update
-      apt:
-        update_cache: true
-        upgrade: dist
-        force_apt_get: true
+    - include_tasks: tasks/xenTenant.yml
 
     - name: Install required system packages
       apt:
