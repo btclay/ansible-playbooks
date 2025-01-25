@@ -3,7 +3,6 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - type: bind
         source: /docker/uptime-kuma/nginx.conf
@@ -16,7 +15,4 @@ services:
     image: louislam/uptime-kuma:latest
     volumes:
       - /docker/uptime-kuma/data:/app/data
-    ports:
-      # <Host Port>:<Container Port>
-      - 3001:3001
     restart: unless-stopped
